@@ -118,3 +118,26 @@ concat(var.client_reporting_team,
     var.product_team,
     var.swe_team,
     )
+
+
+
+random_team_pwd=("devsecops_pwd_generator" "client_reporting_pwd_generator" "ds_de_pwd_generator" "product_pwd_generator" "swe_pwd_generator" "trading_pwd_generator")
+
+for i in ${!resource[@]};
+do
+  if [ "random_string" == "`cat list.bkp | grep "${resource[$i]}" | sed 's/\..*//' | head -1`" ];
+      then
+        count=0
+        for j in $(cat list.bkp | grep "${resource[$i]}" | sed 's/.*\.//');
+        do 
+          t=`echo "$j" | awk -F "[" '{print $1}'`
+          if [[ " ${random_team_pwd[@]} " =~ " $t " ]];
+          then
+            module_name=`echo "module.iam-users.${resource[$i]}.pwd_generator[$count]" | sed 's/\\\.//'`
+            echo "$j ================ $module_name"
+            #terraform state mv "random_string.${j}" $module_name
+            let count+=1
+          fi
+        done
+  fi
+done
