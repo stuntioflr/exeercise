@@ -42,3 +42,16 @@ for i in ${!resource[@]};
         fi
       done
   done
+
+for i in ${!resource[@]};
+  do
+      count=0
+      if [ "aws_iam_group" == "`cat list.bkp | grep "${resource[$i]}" | sed 's/\..*//' | head -1`" ];
+      then
+        for j in $(cat list.bkp | grep "${resource[$i]}" | sed 's/.*\.//');
+        do
+          #echo "$j ========== module.iam-user.${resource[$i]}.group[$count]" | sed 's/\\.//'
+          let count+=1
+        done
+      fi
+  done
