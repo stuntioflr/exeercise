@@ -26,11 +26,11 @@ for i in ${!resource[@]};
 for i in ${!resource[@]};
   do
 # for iam_user_access_key
+      count=0
       for j in $(cat list.bkp | grep "${resource[$i]}" | sed 's/.*\.//');
       do
         if [ "aws_iam_access_key" == "`cat list.bkp | grep "${resource[$i]}" | sed 's/\..*//' | head -1`" ];
         then
-          count=0
           t=`echo "$j" | awk -F "[" '{print $1}'`
           if [[ " ${team_key[@]} " =~ " $t " ]];
           then
