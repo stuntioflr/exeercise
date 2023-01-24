@@ -141,3 +141,14 @@ do
         done
   fi
 done
+
+
+count=0
+if [ "aws_iam_role" == "`cat list.bkp | grep "aws_iam_role\." | sed 's/\..*//' | head -1`"  ]
+then
+  for j in $(cat list.bkp | grep "aws_iam_role\." | sed 's/.*\.//');
+  do  
+    echo "$j ================ module.iam-user.aws_iam_role.role[$count]" | sed 's/\\.//'
+    let count+=1
+  done
+fi
