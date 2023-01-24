@@ -152,3 +152,6 @@ then
     let count+=1
   done
 fi
+
+role_name=("datadog-role" "dms-role" "dms-cloudwatch-logs-role" "rds-backup-s3" "security" "sls-role")
+
