@@ -90,3 +90,23 @@ variable iam_policy_description {
     
   ]
 }
+
+
+for i in ${!resource[@]};
+do
+  if [ "random_string" == "`cat list.bkp | grep "${resource[$i]}" | sed 's/\..*//' | head -1`" ];
+      then
+        count=0
+        for j in $(cat list.bkp | grep "${resource[$i]}" | sed 's/.*\.//');
+        do 
+          t=`echo "$j" | awk -F "[" '{print $1}'`
+          if [[ " ${random_team[@]} " =~ " $t " ]];
+          then
+            module_name=`echo "module.iam-users.${resource[$i]}.user[$count]" | sed 's/\\\.//'`
+            echo "$j ================ $module_name"
+            terraform state mv "random_string.$j" $module_name
+            let count+=1
+          fi
+        done
+  fi
+done
