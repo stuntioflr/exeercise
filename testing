@@ -1,0 +1,23 @@
+resource=("aws_iam_user\." "aws_iam_access_key\." "aws_iam_group\." "aws_iam_group_membership\." "aws_iam_group_membership\." "aws_iam_policy\.")
+#resource=("aws_iam_policy\.")
+team=("swe_users" "product_users" "devsecops_users" "ds_de_users" "client_reporting_users" "trading_users")
+team_key=("swe_keys" "product_keys" "devsecops_keys" "ds_de_keys" "client_reporting_keys" "trading_keys")
+
+for i in ${!resource[@]};
+  do
+      if [ "aws_iam_user" == "`cat list.bkp | grep "${resource[$i]}" | sed 's/\..*//' | head -1`" ];
+      then
+        count=0
+        for j in $(cat list.bkp | grep "${resource[$i]}" | sed 's/.*\.//');
+        do
+          t=`echo "$j" | awk -F "[" '{print $1}'`
+          if [[ " ${team[@]} " =~ " $t " ]];
+          then
+            k=`echo "$j" | grep -o "\[[^]]*\]"`
+            x=
+            echo "$j ========== module.iam-users.${resource[$i]}.user[$count]" | sed 's/\\.//'
+          fi
+          let count+=1
+        done
+      fi
+  done
