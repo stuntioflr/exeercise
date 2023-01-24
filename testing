@@ -80,3 +80,13 @@ for i in ${!resource[@]};
         done
       fi
       rm -rf policy_name
+
+
+variable iam_policy_description {
+  default = [
+    "Athena access for DS/DE teams",
+    "Billing read access",
+    "client-reporting-access",
+    
+  ]
+}
