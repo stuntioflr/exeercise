@@ -110,3 +110,11 @@ do
         done
   fi
 done
+
+
+concat(var.client_reporting_team,
+    var.devsecops_team,
+    var.ds_de_team,
+    var.product_team,
+    var.swe_team,
+    )
