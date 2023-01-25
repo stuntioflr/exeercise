@@ -241,3 +241,6 @@ fi
 
 
 module.iam-user.aws_iam_group_policy_attachment.group-policy-attachment-using-data[17]
+
+group_policy_data=("admin" "devsecops-read" "ds-de-ecr" "engineering-ecr" "product-code-build" "product-code-deploy" "product-code-readonly" "product-ecr" "product-s3" "security" "security-1" "security-2" "security-3" "security-4" "security-5" "security-6" "security-7" "trading-s3")
+
