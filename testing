@@ -244,3 +244,60 @@ module.iam-user.aws_iam_group_policy_attachment.group-policy-attachment-using-da
 
 group_policy_data=("admin" "devsecops-read" "ds-de-ecr" "engineering-ecr" "product-code-build" "product-code-deploy" "product-code-readonly" "product-ecr" "product-s3" "security" "security-1" "security-2" "security-3" "security-4" "security-5" "security-6" "security-7" "trading-s3")
 
+
+
+
+
+
+variable group_policy_attachment {
+  default = [
+    "data-science", #athena
+    "billing",
+    "Engineering",
+    "swish-client-reporting",
+    "cloudwatch-read",
+    "data-science",
+    "data-science",
+    "devops",
+    "Engineering",
+    "data-science",
+    "swish-security",
+    "data-science",
+    "Engineering",
+    "swish-product",
+    "swish-product",
+    "swish-product",
+    "data-science",
+    "swish-trading"
+  ]
+}
+
+variable group_policy_attachment_value {
+  default = [
+    "athena-access",
+    "billing-read-access",
+    "billing-read-access",
+    "client-reporting",
+    "cloudwatch-read-policy",
+    "data-science-s3",
+    "glue-access",
+    "devops-access",
+    "s3-all-swishAssets",
+    "glue-access",
+    "swish-analytics-mfa",
+    "swish-analytics-mfa",
+    "swish-analytics-mfa",
+    "swish-analytics-mfa",
+    "billing-read-access",
+    "cloudwatch-read-policy",
+    "data-science-sqs-read",
+    "swish-analytics-mfa"
+  ]
+}
+
+
+    else
+      #echo $j
+      module_name=`echo "module.iam-user.aws_iam_group_policy_attachment.group-policy-attachment[$count1]" | sed 's/\\\.//'`
+      echo "$j ========== $module_name"
+      let count1+=1
