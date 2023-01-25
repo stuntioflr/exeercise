@@ -168,3 +168,10 @@ then
   done
 fi
 
+policy_data_name=("dms-cloudwatch-logs-attach" "security")
+    if [[  " ${policy_data_name[@]} " =~ " $j " ]];
+    then
+      module_name=`echo "module.iam-user.aws_iam_role_policy_attachment.policy_attachment_data[\"${role_name[$count]}\"]" | sed 's/\\.//'`
+    else
+      module_name=`echo "module.iam-user.aws_iam_role_policy_attachment.policy_attachment[\"${role_name[$count]}\"]" | sed 's/\\.//'`
+    fi
