@@ -301,3 +301,6 @@ variable group_policy_attachment_value {
       module_name=`echo "module.iam-user.aws_iam_group_policy_attachment.group-policy-attachment[$count1]" | sed 's/\\\.//'`
       echo "$j ========== $module_name"
       let count1+=1
+
+
+awk '/^aws_iam_group_policy_attachment/ {print}'
