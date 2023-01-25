@@ -175,3 +175,50 @@ policy_data_name=("dms-cloudwatch-logs-attach" "security")
     else
       module_name=`echo "module.iam-user.aws_iam_role_policy_attachment.policy_attachment[\"${role_name[$count]}\"]" | sed 's/\\.//'`
     fi
+
+
+variable group_policy_attachment_using_data {
+  default = [
+    "admin", #data
+    "data-science", #data
+    "devsecops", #data
+    "Engineering", #data
+    "product", #data
+    "product", #data
+    "product", #data
+    "product", #data
+    "product" #data
+    "security", #data
+    "security", #data
+    "security", #data
+    "security", #data
+    "security", #data
+    "security", #data
+    "security", #data
+    "security", #data
+    "trading", #data
+  ]
+}
+
+variable group_policy_attachment_using_data_value {
+  default = [
+    "AWSSecurityHubFullAccess", #data
+    "AmazonEC2ContainerRegistryReadOnly", #data
+    "ReadOnlyAccess"
+    "AmazonEC2ContainerRegistryReadOnly", #data
+    "AWSCodeBuildDeveloperAccess",
+    "AWSCodeDeployDeployerAccess",
+    "ReadOnlyAccess",
+    "AmazonEC2ContainerRegistryReadOnly",
+    "AmazonS3ReadOnlyAccess",
+    "ReadOnlyAccess",
+    "AmazonMacieFullAccess",
+    "AWSSecurityHubFullAccess", 
+    "AmazonInspectorFullAccess", 
+    "AmazonInspector2FullAccess", 
+    "AmazonGuardDutyFullAccess", 
+    "AWSSecurityHubFullAccess", 
+    "AmazonDetectiveFullAccess", 
+    "AmazonS3ReadOnlyAccess"
+  ]
+}
