@@ -155,3 +155,16 @@ fi
 
 role_name=("datadog-role" "dms-role" "dms-cloudwatch-logs-role" "rds-backup-s3" "security" "sls-role")
 
+
+count=0
+if [ "aws_iam_role_policy_attachment" == "`cat list.bkp | grep "aws_iam_role_policy_attachment\." | sed 's/\..*//' | head -1`" ]
+then
+  for j in $(cat list.bkp | grep "aws_iam_role\." | sed 's/.*\.//');
+  do  
+    #role_name=`echo $j | sed 's/\_/\-/g'`
+    module_name=`echo "module.iam-user.aws_iam_role.role[\"${role_name[$count]}\"]" | sed 's/\\.//'`
+    echo $module_name
+    let count+=1
+  done
+fi
+
