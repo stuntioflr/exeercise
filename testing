@@ -222,3 +222,19 @@ variable group_policy_attachment_using_data_value {
     "AmazonS3ReadOnlyAccess"
   ]
 }
+
+
+count=0
+if [ "aws_iam_group_policy_attachment" == "`cat list.bkp | grep "aws_iam_group_policy_attachment\." | sed 's/\..*//' | head -1`" ]
+then
+  for j in $(cat list.bkp | grep "aws_iam_group_policy_attachment\." | sed 's/.*\.//');
+  do  
+    if [[  " ${group_policy_data[@]} " =~ " $j " ]];
+    then
+      #echo $j
+      module_name=`echo "module.iam-user.aws_iam_group_policy_attachment.group-policy-attachment-using-data[$count]" | sed 's/\\\.//'`
+      echo "$j ========== $module_name"
+      let count+=1
+    fi
+  done
+fi
