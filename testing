@@ -304,3 +304,6 @@ variable group_policy_attachment_value {
 
 
 awk '/^aws_iam_group_policy_attachment/ {print}'
+
+
+confluent_service_account.sa[index(var.sa, "${var.sa_value[count.index]}")].id}
