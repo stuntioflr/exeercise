@@ -1,93 +1,91 @@
-resource "confluent_environment" "environment" {
-    count = length(var.confluent_environment_name)
-  display_name = var.confluent_environment_name[count.index]
+variable "confluent_environment_name" {
+  type = list(string)
 }
 
-resource "confluent_role_binding" "role_binding" {
-    count = length(var.role_binding_user)
-  principal   = var.role_binding_user[count.index]
-  role_name   = var_role_name_user[count.index]
-  crn_pattern = confluent_environment.confluent_environment[count.index].resource_name
+variable "role_binding_user" {
+  type = list(string)
 }
 
-resource "confluent_service_account" "sa" {
-    count   =   length(var.sa)
-  display_name = var.sa[count.index]
-  description  = var.sa_desc[count.index]
+variable "var_role_name_user" {
+  type = list(string)
 }
 
-resource "confluent_role_binding" "role_binding_sa" {
-    for_each = var.role_binding_sa
-  principal   = "User:${confluent_service_account.sa[eack.key].id}"
-  role_name   = lookup(var.role_name_sa, each.key)
-  crn_pattern = confluent_environment.environment[var.role_binding_sa[each.value]].resource_name
+variable "sa" {
+  type = list(string)
 }
 
-resource "confluent_schema_registry_cluster" "essentials" {
-    count = length(var.essentials)
-  package = data.confluent_schema_registry_region.essentials[count.index].package
-
-  environment {
-    id = confluent_environment.environment[count.index].id
-  }
-
-  region {
-    # See https://docs.confluent.io/cloud/current/stream-governance/packages.html#stream-governance-regions
-    id = data.confluent_schema_registry_region.essentials[count.index].id
-  }
+variable "sa_desc" {
+  type = list(string)
 }
 
-resource "confluent_kafka_cluster" "cluster" {
-    count = length(var.cluster_name)
-  display_name = var.cluster_name[count.index]
-  availability = var.az
-  cloud        = var.cloud
-  region       = var.region
-  basic {}
-  environment {
-    id = confluent_environment.environment[count.index].id
-  }
+variable "role_binding_sa" {
+  type = map(string)
 }
 
-resource "confluent_api_key" "api_key" {
-    count = length(var.api_key_name)
-  display_name = var.api_key_name[count.index]
-  description  = var.api_key_desc[count.index]
-  owner {
-    id          = confluent_service_account.sa[count.index].id
-    api_version = confluent_service_account.sa[count.index].api_version
-    kind        = confluent_service_account.sa[count.index].kind
-  }
-
-  managed_resource {
-    id          = confluent_kafka_cluster.cluster[count.index].id
-    api_version = confluent_kafka_cluster.cluster[count.index].api_version
-    kind        = confluent_kafka_cluster.cluster[count.index].kind
-
-    environment {
-      id = confluent_environment.environment[index(var.confluent_environment_name, "${var.api_key_environment[count.index]}")].id
-    }
-  }
-  depends_on = [
-    confluent_role_binding.role_binding_sa[*]
-  ]
+variable "role_name_sa" {
+  type = map(string)
 }
 
-resource "confluent_kafka_acl" "tennis-generic-producer-write-on-topic" {
-    count = length(var.sa_value)
-  kafka_cluster {
-    id = confluent_environment.environment[index(var.confluent_environment_name, "${var.cluster_acl[count.index]}")].id
-  }
-  resource_type = var.resource_type[count.index]
-  resource_name = var.resource_name[count.index]
-  pattern_type  = var.pattern_type[count.index]
-  principal     = "User:${confluent_service_account.sa[index(var.sa, "${var.sa_value[count.index]}")].id}"
-  host          = var.host[count.index]
-  operation     = var.operation[count.index]
-  permission    = var.permission[count.index]
-  rest_endpoint = confluent_kafka_cluster.basic.rest_endpoint
-  credentials {
-    key    = confluent_api_key.tennis-kafka-api-key.id
-    secret = confluent_api_key.tennis-kafka-api-key.secret
-  }
+variable "essentials" {
+  type = list(string)
+}
+
+variable "cluster_name" {
+  type = list(string)
+}
+
+variable "az" {
+  type = string
+}
+
+variable "cloud" {
+  type = string
+}
+
+variable "region" {
+  type = string
+}
+
+variable "api_key_name" {
+  type = list(string)
+}
+
+variable "api_key_desc" {
+  type = list(string)
+}
+
+variable "api_key_environment" {
+  type = list(string)
+}
+
+variable "sa_value" {
+  type = list(string)
+}
+
+variable "cluster_acl" {
+  type = list(string)
+}
+
+variable "resource_type" {
+  type = list(string)
+}
+
+variable "resource_name" {
+  type = list(string)
+}
+
+variable "pattern_type" {
+  type = list(string)
+}
+
+variable "host" {
+  type = list(string)
+}
+
+variable "operation" {
+  type = list(string)
+}
+
+variable "permission" {
+  type = list(string)
 }
