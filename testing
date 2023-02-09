@@ -1,306 +1,91 @@
-resource=("aws_iam_user\." "aws_iam_access_key\." "aws_iam_group\." "aws_iam_group_membership\." "aws_iam_group_membership\." "aws_iam_policy\.")
-#resource=("aws_iam_policy\.")
-team=("swe_users" "product_users" "devsecops_users" "ds_de_users" "client_reporting_users" "trading_users")
-team_key=("swe_keys" "product_keys" "devsecops_keys" "ds_de_keys" "client_reporting_keys" "trading_keys")
-
-for i in ${!resource[@]};
-  do
-      if [ "aws_iam_user" == "`cat list.bkp | grep "${resource[$i]}" | sed 's/\..*//' | head -1`" ];
-      then
-        count=0
-        for j in $(cat list.bkp | grep "${resource[$i]}" | sed 's/.*\.//');
-        do
-          t=`echo "$j" | awk -F "[" '{print $1}'`
-          if [[ " ${team[@]} " =~ " $t " ]];
-          then
-            k=`echo "$j" | grep -o "\[[^]]*\]"`
-            x=
-            echo "$j ========== module.iam-users.${resource[$i]}.user[$count]" | sed 's/\\.//'
-          fi
-          let count+=1
-        done
-      fi
-  done
-
-
-for i in ${!resource[@]};
-  do
-# for iam_user_access_key
-      count=0
-      for j in $(cat list.bkp | grep "${resource[$i]}" | sed 's/.*\.//');
-      do
-        if [ "aws_iam_access_key" == "`cat list.bkp | grep "${resource[$i]}" | sed 's/\..*//' | head -1`" ];
-        then
-          t=`echo "$j" | awk -F "[" '{print $1}'`
-          if [[ " ${team_key[@]} " =~ " $t " ]];
-          then
-            k=`echo "$j" | grep -o "\[[^]]*\]"`
-            x=
-            echo "$j ========== module.iam-users.${resource[$i]}.user_key[$count]" | sed 's/\\.//'
-            let count+=1
-          fi
-        fi
-      done
-  done
-
-for i in ${!resource[@]};
-  do
-      count=0
-      if [ "aws_iam_group" == "`cat list.bkp | grep "${resource[$i]}" | sed 's/\..*//' | head -1`" ];
-      then
-        for j in $(cat list.bkp | grep "${resource[$i]}" | sed 's/.*\.//');
-        do
-          #echo "$j ========== module.iam-user.${resource[$i]}.group[$count]" | sed 's/\\.//'
-          let count+=1
-        done
-      fi
-  done
-
-for i in ${!resource[@]};
-  do
-      count=0
-      if [ "aws_iam_group_membership" == "`cat list.bkp | grep "${resource[$i]}" | sed 's/\..*//' | head -1`" ];
-      then
-        for j in $(cat list.bkp | grep "${resource[$i]}" | sed 's/.*\.//');
-        do
-          echo "$j ========== module.iam-user.${resource[$i]}.group[$count]" | sed 's/\\.//'
-          let count+=1
-        done
-      fi
-  done
-
-      cat list.bkp | grep "aws_iam_policy" | sed 's/^data.*//' | sed "/^$/d" > policy_name
-      count=0
-      if [ "aws_iam_policy" == "`cat list.bkp | grep "aws_iam_policy" | sed 's/^data.*//' | sed "/^$/d" | sed 's/\..*//' | head -1`" ]
-      then
-        for j in $(cat policy_name | sed 's/.*\.//');
-        do
-            echo "$j ================ module.iam-user.aws_iam_policy.policy[$count]" | sed 's/\\.//'
-            let count+=1
-        done
-      fi
-      rm -rf policy_name
-
-
-variable iam_policy_description {
-  default = [
-    "Athena access for DS/DE teams",
-    "Billing read access",
-    "client-reporting-access",
-    
-  ]
+variable "confluent_environment_name" {
+  type = list(string)
 }
 
-
-for i in ${!resource[@]};
-do
-  if [ "random_string" == "`cat list.bkp | grep "${resource[$i]}" | sed 's/\..*//' | head -1`" ];
-      then
-        count=0
-        for j in $(cat list.bkp | grep "${resource[$i]}" | sed 's/.*\.//');
-        do 
-          t=`echo "$j" | awk -F "[" '{print $1}'`
-          if [[ " ${random_team[@]} " =~ " $t " ]];
-          then
-            module_name=`echo "module.iam-users.${resource[$i]}.user[$count]" | sed 's/\\\.//'`
-            echo "$j ================ $module_name"
-            terraform state mv "random_string.$j" $module_name
-            let count+=1
-          fi
-        done
-  fi
-done
-
-
-concat(var.client_reporting_team,
-    var.devsecops_team,
-    var.ds_de_team,
-    var.product_team,
-    var.swe_team,
-    )
-
-
-
-random_team_pwd=("devsecops_pwd_generator" "client_reporting_pwd_generator" "ds_de_pwd_generator" "product_pwd_generator" "swe_pwd_generator" "trading_pwd_generator")
-
-for i in ${!resource[@]};
-do
-  if [ "random_string" == "`cat list.bkp | grep "${resource[$i]}" | sed 's/\..*//' | head -1`" ];
-      then
-        count=0
-        for j in $(cat list.bkp | grep "${resource[$i]}" | sed 's/.*\.//');
-        do 
-          t=`echo "$j" | awk -F "[" '{print $1}'`
-          if [[ " ${random_team_pwd[@]} " =~ " $t " ]];
-          then
-            module_name=`echo "module.iam-users.${resource[$i]}.pwd_generator[$count]" | sed 's/\\\.//'`
-            echo "$j ================ $module_name"
-            #terraform state mv "random_string.${j}" $module_name
-            let count+=1
-          fi
-        done
-  fi
-done
-
-
-count=0
-if [ "aws_iam_role" == "`cat list.bkp | grep "aws_iam_role\." | sed 's/\..*//' | head -1`"  ]
-then
-  for j in $(cat list.bkp | grep "aws_iam_role\." | sed 's/.*\.//');
-  do  
-    echo "$j ================ module.iam-user.aws_iam_role.role[$count]" | sed 's/\\.//'
-    let count+=1
-  done
-fi
-
-role_name=("datadog-role" "dms-role" "dms-cloudwatch-logs-role" "rds-backup-s3" "security" "sls-role")
-
-
-count=0
-if [ "aws_iam_role_policy_attachment" == "`cat list.bkp | grep "aws_iam_role_policy_attachment\." | sed 's/\..*//' | head -1`" ]
-then
-  for j in $(cat list.bkp | grep "aws_iam_role\." | sed 's/.*\.//');
-  do  
-    #role_name=`echo $j | sed 's/\_/\-/g'`
-    module_name=`echo "module.iam-user.aws_iam_role.role[\"${role_name[$count]}\"]" | sed 's/\\.//'`
-    echo $module_name
-    let count+=1
-  done
-fi
-
-policy_data_name=("dms-cloudwatch-logs-attach" "security")
-    if [[  " ${policy_data_name[@]} " =~ " $j " ]];
-    then
-      module_name=`echo "module.iam-user.aws_iam_role_policy_attachment.policy_attachment_data[\"${role_name[$count]}\"]" | sed 's/\\.//'`
-    else
-      module_name=`echo "module.iam-user.aws_iam_role_policy_attachment.policy_attachment[\"${role_name[$count]}\"]" | sed 's/\\.//'`
-    fi
-
-
-variable group_policy_attachment_using_data {
-  default = [
-    "admin", #data
-    "data-science", #data
-    "devsecops", #data
-    "Engineering", #data
-    "product", #data
-    "product", #data
-    "product", #data
-    "product", #data
-    "product" #data
-    "security", #data
-    "security", #data
-    "security", #data
-    "security", #data
-    "security", #data
-    "security", #data
-    "security", #data
-    "security", #data
-    "trading", #data
-  ]
+variable "role_binding_user" {
+  type = list(string)
 }
 
-variable group_policy_attachment_using_data_value {
-  default = [
-    "AWSSecurityHubFullAccess", #data
-    "AmazonEC2ContainerRegistryReadOnly", #data
-    "ReadOnlyAccess"
-    "AmazonEC2ContainerRegistryReadOnly", #data
-    "AWSCodeBuildDeveloperAccess",
-    "AWSCodeDeployDeployerAccess",
-    "ReadOnlyAccess",
-    "AmazonEC2ContainerRegistryReadOnly",
-    "AmazonS3ReadOnlyAccess",
-    "ReadOnlyAccess",
-    "AmazonMacieFullAccess",
-    "AWSSecurityHubFullAccess", 
-    "AmazonInspectorFullAccess", 
-    "AmazonInspector2FullAccess", 
-    "AmazonGuardDutyFullAccess", 
-    "AWSSecurityHubFullAccess", 
-    "AmazonDetectiveFullAccess", 
-    "AmazonS3ReadOnlyAccess"
-  ]
+variable "var_role_name_user" {
+  type = list(string)
 }
 
-
-count=0
-if [ "aws_iam_group_policy_attachment" == "`cat list.bkp | grep "aws_iam_group_policy_attachment\." | sed 's/\..*//' | head -1`" ]
-then
-  for j in $(cat list.bkp | grep "aws_iam_group_policy_attachment\." | sed 's/.*\.//');
-  do  
-    if [[  " ${group_policy_data[@]} " =~ " $j " ]];
-    then
-      #echo $j
-      module_name=`echo "module.iam-user.aws_iam_group_policy_attachment.group-policy-attachment-using-data[$count]" | sed 's/\\\.//'`
-      echo "$j ========== $module_name"
-      let count+=1
-    fi
-  done
-fi
-
-
-module.iam-user.aws_iam_group_policy_attachment.group-policy-attachment-using-data[17]
-
-group_policy_data=("admin" "devsecops-read" "ds-de-ecr" "engineering-ecr" "product-code-build" "product-code-deploy" "product-code-readonly" "product-ecr" "product-s3" "security" "security-1" "security-2" "security-3" "security-4" "security-5" "security-6" "security-7" "trading-s3")
-
-
-
-
-
-
-variable group_policy_attachment {
-  default = [
-    "data-science", #athena
-    "billing",
-    "Engineering",
-    "swish-client-reporting",
-    "cloudwatch-read",
-    "data-science",
-    "data-science",
-    "devops",
-    "Engineering",
-    "data-science",
-    "swish-security",
-    "data-science",
-    "Engineering",
-    "swish-product",
-    "swish-product",
-    "swish-product",
-    "data-science",
-    "swish-trading"
-  ]
+variable "sa" {
+  type = list(string)
 }
 
-variable group_policy_attachment_value {
-  default = [
-    "athena-access",
-    "billing-read-access",
-    "billing-read-access",
-    "client-reporting",
-    "cloudwatch-read-policy",
-    "data-science-s3",
-    "glue-access",
-    "devops-access",
-    "s3-all-swishAssets",
-    "glue-access",
-    "swish-analytics-mfa",
-    "swish-analytics-mfa",
-    "swish-analytics-mfa",
-    "swish-analytics-mfa",
-    "billing-read-access",
-    "cloudwatch-read-policy",
-    "data-science-sqs-read",
-    "swish-analytics-mfa"
-  ]
+variable "sa_desc" {
+  type = list(string)
 }
 
+variable "role_binding_sa" {
+  type = map(string)
+}
 
-    else
-      #echo $j
-      module_name=`echo "module.iam-user.aws_iam_group_policy_attachment.group-policy-attachment[$count1]" | sed 's/\\\.//'`
-      echo "$j ========== $module_name"
-      let count1+=1
+variable "role_name_sa" {
+  type = map(string)
+}
 
+variable "essentials" {
+  type = list(string)
+}
 
-awk '/^aws_iam_group_policy_attachment/ {print}'
+variable "cluster_name" {
+  type = list(string)
+}
+
+variable "az" {
+  type = string
+}
+
+variable "cloud" {
+  type = string
+}
+
+variable "region" {
+  type = string
+}
+
+variable "api_key_name" {
+  type = list(string)
+}
+
+variable "api_key_desc" {
+  type = list(string)
+}
+
+variable "api_key_environment" {
+  type = list(string)
+}
+
+variable "sa_value" {
+  type = list(string)
+}
+
+variable "cluster_acl" {
+  type = list(string)
+}
+
+variable "resource_type" {
+  type = list(string)
+}
+
+variable "resource_name" {
+  type = list(string)
+}
+
+variable "pattern_type" {
+  type = list(string)
+}
+
+variable "host" {
+  type = list(string)
+}
+
+variable "operation" {
+  type = list(string)
+}
+
+variable "permission" {
+  type = list(string)
+}
