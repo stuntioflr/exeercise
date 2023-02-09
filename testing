@@ -1,91 +1,27 @@
-variable "confluent_environment_name" {
-  type = list(string)
-}
+module "confluent" {
+  source = "./module"
 
-variable "role_binding_user" {
-  type = list(string)
-}
-
-variable "var_role_name_user" {
-  type = list(string)
-}
-
-variable "sa" {
-  type = list(string)
-}
-
-variable "sa_desc" {
-  type = list(string)
-}
-
-variable "role_binding_sa" {
-  type = map(string)
-}
-
-variable "role_name_sa" {
-  type = map(string)
-}
-
-variable "essentials" {
-  type = list(string)
-}
-
-variable "cluster_name" {
-  type = list(string)
-}
-
-variable "az" {
-  type = string
-}
-
-variable "cloud" {
-  type = string
-}
-
-variable "region" {
-  type = string
-}
-
-variable "api_key_name" {
-  type = list(string)
-}
-
-variable "api_key_desc" {
-  type = list(string)
-}
-
-variable "api_key_environment" {
-  type = list(string)
-}
-
-variable "sa_value" {
-  type = list(string)
-}
-
-variable "cluster_acl" {
-  type = list(string)
-}
-
-variable "resource_type" {
-  type = list(string)
-}
-
-variable "resource_name" {
-  type = list(string)
-}
-
-variable "pattern_type" {
-  type = list(string)
-}
-
-variable "host" {
-  type = list(string)
-}
-
-variable "operation" {
-  type = list(string)
-}
-
-variable "permission" {
-  type = list(string)
+  confluent_environment_name = var.confluent_environment_name
+  role_binding_user          = var.role_binding_user
+  var_role_name_user         = var.var_role_name_user
+  sa                          = var.sa
+  sa_desc                     = var.sa_desc
+  role_binding_sa            = var.role_binding_sa
+  role_name_sa               = var.role_name_sa
+  essentials                  = var.essentials
+  cluster_name               = var.cluster_name
+  az                         = var.az
+  cloud                       = var.cloud
+  region                      = var.region
+  api_key_name               = var.api_key_name
+  api_key_desc               = var.api_key_desc
+  api_key_environment        = var.api_key_environment
+  sa_value                   = var.sa_value
+  cluster_acl                = var.cluster_acl
+  resource_type              = var.resource_type
+  resource_name              = var.resource_name
+  pattern_type               = var.pattern_type
+  host                       = var.host
+  operation                  = var.operation
+  permission                 = var.permission
 }
