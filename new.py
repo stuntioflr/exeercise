@@ -30,8 +30,9 @@ def main():
     st.title("Snowflake Query Execution")
 
     # Button to configure Snowflake connection
-    if st.button("Configure Snowflake"):
-        config = {}
+    config_visible = st.button("Configure Snowflake")
+    config = {}
+    if config_visible:
         config['username'] = st.text_input("Username")
         config['password'] = st.text_input("Password", type="password")
         config['account_url'] = st.text_input("Account URL")
