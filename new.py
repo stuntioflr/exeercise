@@ -1,8 +1,8 @@
 import streamlit as st
 import snowflake.connector
 
-# Function to execute queries on Snowflake
-def execute_query(query, config):
+# Function to insert a record into Snowflake
+def insert_record(config, data):
     try:
         con = snowflake.connector.connect(
             user=config['username'],
@@ -13,12 +13,12 @@ def execute_query(query, config):
             schema=config['schema']
         )
         cursor = con.cursor()
+        query = f"INSERT INTO your_table_name (column1, column2, column3) VALUES ('{data['value1']}', '{data['value2']}', '{data['value3']}')"
         cursor.execute(query)
-        result = cursor.fetchall()
-        st.table(result)
-        st.success("Query executed successfully!")
+        con.commit()
+        st.success("Record inserted successfully!")
     except Exception as e:
-        st.error(f"Error executing query: {str(e)}")
+        st.error(f"Error inserting record: {str(e)}")
     finally:
         if cursor:
             cursor.close()
@@ -27,32 +27,27 @@ def execute_query(query, config):
 
 # Streamlit UI
 def main():
-    st.title("Snowflake Query Execution")
+    st.title("Insert Record into Snowflake Database")
 
-    # Button to configure Snowflake connection
-    config_visible = st.button("Configure Snowflake")
-    config_open = False
+    # Snowflake configuration
     config = {}
-    
-    if config_visible:
-        if config_open:
-            config_open = False
-        else:
-            config_open = True
+    config['username'] = st.text_input("Username")
+    config['password'] = st.text_input("Password", type="password")
+    config['account_url'] = st.text_input("Account URL")
+    config['warehouse'] = st.text_input("Warehouse")
+    config['database'] = st.text_input("Database")
+    config['schema'] = st.text_input("Schema")
 
-    if config_open:
-        config['username'] = st.text_input("Username")
-        config['password'] = st.text_input("Password", type="password")
-        config['account_url'] = st.text_input("Account URL")
-        config['warehouse'] = st.text_input("Warehouse")
-        config['database'] = st.text_input("Database")
-        config['schema'] = st.text_input("Schema")
-        submit_button = st.button("Connect")
+    # Record details
+    st.subheader("Record Details")
+    data = {}
+    data['value1'] = st.text_input("Value 1")
+    data['value2'] = st.text_input("Value 2")
+    data['value3'] = st.text_input("Value 3")
 
-        # Execute queries if form submitted
-        if submit_button:
-            query = st.text_area("Enter your query")
-            execute_query(query, config)
+    # Insert button
+    if st.button("Insert Record"):
+        insert_record(config, data)
 
 if __name__ == '__main__':
     main()
