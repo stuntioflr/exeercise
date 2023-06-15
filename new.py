@@ -14,6 +14,8 @@ def execute_query(query):
         )
         cursor = con.cursor()
         cursor.execute(query)
+        result = cursor.fetchall()
+        st.table(result)
         st.success("Query executed successfully!")
     except Exception as e:
         st.error(f"Error executing query: {str(e)}")
@@ -29,7 +31,7 @@ def main():
 
     # Button to configure Snowflake connection
     if st.button("ep_config"):
-        with st.form("connection_form"):
+        with st.form_dialogue("connection_form"):
             st.subheader("Snowflake Configuration")
             username = st.text_input("Username")
             password = st.text_input("Password", type="password")
@@ -39,10 +41,10 @@ def main():
             schema = st.text_input("Schema")
             submit_button = st.form_submit_button(label="Connect")
 
-        # Execute queries if form submitted
-        if submit_button:
-            query = st.text_area("Enter your query")
-            execute_query(query)
+            # Execute queries if form submitted
+            if submit_button:
+                query = st.text_area("Enter your query")
+                execute_query(query)
 
 if __name__ == '__main__':
     main()
