@@ -31,8 +31,16 @@ def main():
 
     # Button to configure Snowflake connection
     config_visible = st.button("Configure Snowflake")
+    config_open = False
     config = {}
+    
     if config_visible:
+        if config_open:
+            config_open = False
+        else:
+            config_open = True
+
+    if config_open:
         config['username'] = st.text_input("Username")
         config['password'] = st.text_input("Password", type="password")
         config['account_url'] = st.text_input("Account URL")
